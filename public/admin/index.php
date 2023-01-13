@@ -31,11 +31,27 @@
     }
 
     $pdo = conectar();
-    $sent = $pdo->query("SELECT * FROM usuarios");
+
+    $id_validar = obtener_post('id_validar');
+
+    
+    if (isset($id_validar)) {
+        var_dump($id_validar);
+        $sent = $pdo->prepare('UPDATE articulos
+                                SET validado = NOT validado
+                                WHERE id = :id_validar');
+        $sent->execute([':id_validar' => $id_validar]);
+    }
+
+    $sent = $pdo->query("SELECT * FROM articulos ORDER BY codigo");
     ?>
     <div class="container mx-auto">
         <?php require '../../src/_menu.php' ?>
         <?php require '../../src/_alerts.php' ?>
+        <a href="/admin/usuarios.php">
+        <button class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">Usuarios</button></a>
+        <a href="/admin/insertar.php">
+        <button class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">Insertar articulo</button></a>
         <div class="overflow-x-auto relative mt-4">
             <table class="mx-auto text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -57,6 +73,14 @@
                                         <form action="/admin/borrar.php" method="POST" class="inline">
                                         <input type="hidden" name="id" value="<?= $fila_id ?>">
                                     <button type="submit" onclick="cambiar(event, <?= $fila_id ?>)" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" data-modal-toggle="popup-modal">Borrar</button>
+                                    </form>
+                                    <form action="" method="POST" class="inline">
+                                    <input type="hidden" name="id_validar" value="<?= $fila_id ?>">
+                                    <?php if ($fila['validado']): ?>
+                                        <button type="submit" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Invalidar</button>
+                                    <?php else: ?>
+                                        <button type="submit" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">Validar</button>
+                                    <?php endif ?>
                                 </form>
                             </td>
                         </tr>

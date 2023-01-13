@@ -49,7 +49,7 @@ class Usuario extends Modelo
         }
 
         return password_verify($password, $fila['password'])
-            ? new static($fila)
+            ? new static ($fila)
             : false;
     }
 
@@ -60,7 +60,8 @@ class Usuario extends Modelo
                 ['usuario = :usuario'],
                 [':usuario' => $login],
                 $pdo
-            ));
+            )
+            );
     }
 
     public static function registrar($login, $password, ?PDO $pdo = null)
@@ -73,14 +74,13 @@ class Usuario extends Modelo
         ]);
     }
 
-    public function getValidado(): bool 
+    public function getValidado(): bool
     {
         return $this->validado;
     }
 
 
     public static function cambiar_contrasenia($usuario, $password, ?PDO $pdo = null)
-
     {
         $sent = $pdo->prepare('UPDATE usuarios SET password = :password WHERE id = :id');
         $sent->execute([
@@ -88,5 +88,11 @@ class Usuario extends Modelo
             ':password' => password_hash($password, PASSWORD_DEFAULT),
         ]);
     }
+
+    public function obtenerId()
+    {
+        return $this->id;
+    }
+
 
 }

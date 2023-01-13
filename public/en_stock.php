@@ -1,4 +1,4 @@
-<?php session_start() ?>
+<?php session_start()?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -47,21 +47,17 @@
         $execute[':categoria'] = "%$categoria%";
     }
 
-    if(obtener_get('_testigo') !== null) {
-        $where[] = 'existencias > 0';
-    }
-
-    
-    
-    
     $where = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
-    $_SESSION['busqueda'] = "SELECT * FROM articulos $where";
+    if(empty($where)) {
+        $stock = "WHERE existencias > 0";
+    } else {
+        $stock = "AND existencias > 0";
+    }
     $pdo = conectar();
-    $sent = $pdo->prepare("SELECT * FROM articulos $where");
+    $sent = $pdo->prepare("SELECT * FROM articulos $where $stock");
     $sent->execute($execute);
     
 
-    
     ?>
     <div class="container mx-auto">
         <?php require '../src/_menu.php' ?>
@@ -113,7 +109,6 @@
             <main class="flex-1 grid grid-cols-3 gap-4 justify-center justify-items-center">
                 </form>
                 <?php foreach ($sent as $fila) : ?>
-                    <?php if(hh($fila['validado'] == true)): ?>
                     <div class="p-6 max-w-xs min-w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
                         <a href="#">
                             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><?= hh($fila['descripcion']) ?></h5>
@@ -134,7 +129,6 @@
                             </svg>
                         </a>
                     </div>
-                    <?php endif ?>
                 <?php endforeach ?>
             </main>
 

@@ -15,6 +15,8 @@ class Articulo extends Modelo
 
     private $existencias;
 
+    private $categoria;
+
     public function __construct(array $campos)
     {
         $this->id = $campos['id'];
@@ -22,6 +24,7 @@ class Articulo extends Modelo
         $this->descripcion = $campos['descripcion'];
         $this->precio = $campos['precio'];
         $this->existencias = $campos['existencias'];
+        $this->categoria = $campos['categoria'];
     }
 
     public static function existe(int $id, ?PDO $pdo = null): bool
@@ -54,4 +57,12 @@ class Articulo extends Modelo
     {
         return $this->id;
     }
+
+
+    public function getCategoria()
+
+    {
+        return $this->categoria;
+    }
+
 }

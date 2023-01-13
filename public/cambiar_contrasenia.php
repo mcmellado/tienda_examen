@@ -36,17 +36,16 @@ use App\Tablas\Usuario;
 
     if (isset($passwordold, $passwordnew, $passwordnew_repeat)) {
         $pdo = conectar();
-        $id = hh(App\Tablas\Usuario::logueado()->id);
-        $usuario = hh(App\Tablas\Usuario::logueado());
+        $usuario = App\Tablas\Usuario::logueado();
+        $id = $usuario->obtenerId();
 
         $sent = $pdo->prepare("SELECT password FROM usuarios WHERE id = :id");
         $sent->execute([':id' => $id]);
 
         $contrasenia_actual = $sent->fetchColumn();
+        var_dump($id);
 
-        var_dump($contrasenia_actual);
-
-        if ($passwornew != $passwordold) {
+        if (!password_verify($passwordold, $contrasenia_actual)) {
             $error['passwordold'][] = 'No has introducido correctamente la contraseña antigua';
         }
 
@@ -54,7 +53,7 @@ use App\Tablas\Usuario;
             $error['passwordold'][] = 'La contraseña antigua es obligatoria';
         }
 
-        if ($passwornew != $passwordnew_repeat) {
+        if ($passwordnew != $passwordnew_repeat) {
             $error['passwordnew'][] = 'Las contraseñas no coinciden.';
         }
 
@@ -95,8 +94,8 @@ use App\Tablas\Usuario;
 
         if ($vacio) {
             // Registrar
-            $usuario->cambiar_contrasenia($usuario, $password, $pdo);
-            $_SESSION['exito'] = 'El usuario se ha registrado correctamente.';
+            $usuario->cambiar_contrasenia($usuario, $passwordnew, $pdo);
+            $_SESSION['exito'] = 'El usuario ha modificado la contraseña correctamente.';
             return volver();
             }
         }
